@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRÛLÉ — Specialty Coffee</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5EDD8;
+    --parchment: #EDE0C4;
+    --espresso: #1A0A00;
+    --roast: #3D1C02;
+    --caramel: #C8813A;
+    --gold: #D4A853;
+    --mocha: #6B3A1F;
+    --steam: rgba(245, 237, 216, 0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--espresso);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, opacity 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(212, 168, 83, 0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), width 0.3s, height 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  body:has(a:hover) .cursor-ring,
+  body:has(button:hover) .cursor-ring {
+    width: 56px; height: 56px;
+    border-color: var(--caramel);
+  }
+
+  /* Noise Texture Overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 500;
+    padding: 28px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(26,10,0,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(2px);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex; gap: 40px; list-style: none;
+  }
+  .nav-links a {
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    transition: opacity 0.3s, color 0.3s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+  .nav-cta {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 10px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.3s, color 0.3s;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--espresso); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 140px 60px 80px;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--caramel);
+    margin-bottom: 24px;
+    animation: fadeUp 1s ease both;
+    animation-delay: 0.2s;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 7vw, 7rem);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    margin-bottom: 36px;
+    animation: fadeUp 1s ease both;
+    animation-delay: 0.4s;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.25rem;
+    color: rgba(245,237,216,0.65);
+    max-width: 380px;
+    line-height: 1.7;
+    margin-bottom: 56px;
+    animation: fadeUp 1s ease both;
+    animation-delay: 0.6s;
+  }
+  .hero-actions {
+    display: flex; gap: 20px; align-items: center;
+    animation: fadeUp 1s ease both;
+    animation-delay: 0.8s;
+  }
+  .btn-primary {
+    background: var(--caramel);
+    color: var(--espresso);
+    border: none;
+    padding: 16px 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.3s, transform 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+  .btn-ghost {
+    color: var(--cream);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    cursor: none;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+    transition: opacity 0.3s;
+  }
+  .btn-ghost:hover { opacity: 1; }
+  .btn-ghost::after {
+    content: '→';
+    font-size: 1rem;
+    transition: transform 0.3s;
+  }
+  .btn-ghost:hover::after { transform: translateX(4px); }
+
+  .hero-right {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    animation: fadeIn 1.5s ease both;
+    animation-delay: 0.3s;
+  }
+  .hero-img-wrap {
+    width: 100%; height: 100%;
+    position: relative;
+  }
+  .hero-img-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, var(--espresso) 0%, transparent 30%),
+                linear-gradient(to top, var(--espresso) 0%, transparent 25%);
+    z-index: 1;
+  }
+  .hero-coffee-visual {
+    width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse 60% 80% at 60% 50%, #3D1C02 0%, #1A0A00 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  /* Animated coffee cup SVG visual */
+  .cup-scene {
+    width: 340px; height: 400px;
+    position: relative;
+  }
+  .steam-path {
+    stroke: rgba(245,237,216,0.3);
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    animation: steam 3s ease-in-out infinite;
+  }
+  .steam-path:nth-child(2) { animation-delay: 0.5s; }
+  .steam-path:nth-child(3) { animation-delay: 1s; }
+  @keyframes steam {
+    0% { opacity: 0; transform: translateY(0) scaleX(1); }
+    30% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-40px) scaleX(1.4); }
+  }
+  .hero-badge {
+    position: absolute;
+    bottom: 60px; left: 60px;
+    border: 1px solid rgba(212,168,83,0.3);
+    padding: 20px 24px;
+    backdrop-filter: blur(8px);
+    background: rgba(26,10,0,0.6);
+    animation: fadeUp 1s ease both;
+    animation-delay: 1.2s;
+    z-index: 3;
+  }
+  .badge-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .badge-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,237,216,0.5);
+    margin-top: 4px;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px; left: 60px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,237,216,0.35);
+    animation: fadeUp 1s ease both;
+    animation-delay: 1.4s;
+  }
+  .scroll-line {
+    width: 40px; height: 1px;
+    background: var(--gold);
+    opacity: 0.4;
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { width: 40px; opacity: 0.4; }
+    50% { width: 70px; opacity: 0.7; }
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap {
+    border-top: 1px solid rgba(212,168,83,0.2);
+    border-bottom: 1px solid rgba(212,168,83,0.2);
+    padding: 18px 0;
+    overflow: hidden;
+    background: rgba(61,28,2,0.3);
+  }
+  .marquee-track {
+    display: flex;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    display: flex; align-items: center; gap: 32px;
+    padding: 0 32px;
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(245,237,216,0.4);
+  }
+  .marquee-dot { color: var(--gold); font-size: 1rem; }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── SECTION SHARED ── */
+  section { position: relative; }
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--caramel);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  /* ── MENU ── */
+  #menu {
+    padding: 120px 60px;
+    background: linear-gradient(180deg, var(--espresso) 0%, #0F0500 100%);
+  }
+  .menu-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 80px;
+  }
+  .menu-tabs {
+    display: flex; gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: transparent;
+    border: 1px solid rgba(245,237,216,0.15);
+    color: rgba(245,237,216,0.45);
+    padding: 10px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.3s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: var(--caramel);
+    border-color: var(--caramel);
+    color: var(--espresso);
+  }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .menu-item {
+    background: rgba(61,28,2,0.25);
+    padding: 40px 36px;
+    border: 1px solid rgba(212,168,83,0.08);
+    transition: background 0.4s, border-color 0.4s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .menu-item::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--caramel), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .menu-item:hover {
+    background: rgba(61,28,2,0.6);
+    border-color: rgba(212,168,83,0.2);
+    transform: translateY(-4px);
+  }
+  .menu-item:hover::before { opacity: 1; }
+  .item-icon {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .item-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+  }
+  .item-desc {
+    font-size: 0.82rem;
+    color: rgba(245,237,216,0.5);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .item-footer {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .item-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    font-weight: 400;
+  }
+  .item-add {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(212,168,83,0.4);
+    background: transparent;
+    color: var(--gold);
+    font-size: 1.2rem;
+    cursor: none;
+    transition: all 0.3s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .item-add:hover {
+    background: var(--caramel);
+    border-color: var(--caramel);
+    color: var(--espresso);
+    transform: rotate(90deg);
+  }
+  .item-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--espresso);
+    background: var(--caramel);
+    padding: 3px 10px;
+    position: absolute;
+    top: 20px; right: 20px;
+  }
+
+  /* ── STORY ── */
+  #story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 80vh;
+  }
+  .story-visual {
+    background: linear-gradient(135deg, #3D1C02 0%, #6B3A1F 50%, #3D1C02 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .story-visual::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(212,168,83,0.03) 40px,
+      rgba(212,168,83,0.03) 41px
+    );
+  }
+  .big-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 22vw;
+    font-weight: 900;
+    color: rgba(212,168,83,0.07);
+    position: absolute;
+    line-height: 1;
+    user-select: none;
+  }
+  .story-stats {
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .stat-block {
+    background: rgba(26,10,0,0.5);
+    padding: 48px 40px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(212,168,83,0.1);
+  }
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,237,216,0.4);
+  }
+  .story-text {
+    padding: 100px 80px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .story-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.35rem;
+    line-height: 1.9;
+    color: rgba(245,237,216,0.7);
+    margin: 28px 0 48px;
+    max-width: 500px;
+  }
+  .story-body strong {
+    font-style: normal;
+    color: var(--cream);
+    font-weight: 400;
+  }
+  .divider-gold {
+    width: 60px; height: 1px;
+    background: var(--gold);
+    margin: 32px 0;
+    opacity: 0.6;
+  }
+
+  /* ── SPECIALS ── */
+  #specials {
+    padding: 120px 60px;
+    background: var(--roast);
+  }
+  .specials-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 3px;
+    margin-top: 70px;
+  }
+  .special-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 460px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 40px;
+    cursor: none;
+    transition: transform 0.4s;
+  }
+  .special-card:hover { transform: scale(1.01); }
+  .special-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.6s ease;
+  }
+  .special-card:hover .special-bg { transform: scale(1.05); }
+  .special-bg-1 {
+    background: radial-gradient(ellipse at 40% 30%, #7B4A20 0%, #2E1200 100%);
+  }
+  .special-bg-2 {
+    background: radial-gradient(ellipse at 60% 40%, #5C3317 0%, #1A0A00 100%);
+  }
+  .special-bg-3 {
+    background: radial-gradient(ellipse at 50% 60%, #4A2910 0%, #0F0500 100%);
+  }
+  .special-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+  }
+  .special-content { position: relative; z-index: 2; }
+  .special-season {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--caramel);
+    margin-bottom: 10px;
+  }
+  .special-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .special-desc {
+    font-size: 0.82rem;
+    color: rgba(245,237,216,0.55);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .special-price-row {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .special-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+  }
+  .special-order {
+    background: var(--caramel);
+    border: none;
+    color: var(--espresso);
+    padding: 10px 22px;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: none;
+    transition: background 0.3s;
+  }
+  .special-order:hover { background: var(--gold); }
+  .special-emoji {
+    font-size: 5rem;
+    position: absolute;
+    top: 40px; right: 40px;
+    opacity: 0.25;
+    z-index: 1;
+    filter: grayscale(0.3);
+  }
+
+  /* ── TESTIMONIALS ── */
+  #reviews {
+    padding: 120px 60px;
+    background: linear-gradient(180deg, #0F0500 0%, var(--espresso) 100%);
+    text-align: center;
+  }
+  .reviews-intro { max-width: 600px; margin: 0 auto 80px; }
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .review-card {
+    background: rgba(61,28,2,0.3);
+    border: 1px solid rgba(212,168,83,0.1);
+    padding: 40px 36px;
+    text-align: left;
+    position: relative;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .review-card:hover {
+    border-color: rgba(212,168,83,0.25);
+    background: rgba(61,28,2,0.5);
+  }
+  .review-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    color: var(--gold);
+    opacity: 0.25;
+    line-height: 1;
+    position: absolute;
+    top: 20px; left: 28px;
+    font-style: italic;
+  }
+  .review-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: rgba(245,237,216,0.75);
+    margin-bottom: 28px;
+    padding-top: 16px;
+  }
+  .review-stars {
+    color: var(--gold);
+    letter-spacing: 3px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .reviewer-name {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,237,216,0.4);
+  }
+
+  /* ── HOURS & LOCATION ── */
+  #visit {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .visit-map {
+    background: linear-gradient(135deg, #2E1200 0%, #3D1C02 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 100px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .map-placeholder {
+    width: 100%; max-width: 400px;
+    border: 1px solid rgba(212,168,83,0.2);
+    padding: 60px 40px;
+    text-align: center;
+    backdrop-filter: blur(4px);
+    background: rgba(26,10,0,0.4);
+    position: relative; z-index: 2;
+  }
+  .map-icon { font-size: 3rem; margin-bottom: 24px; }
+  .map-address {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .map-city { font-size: 0.8rem; letter-spacing: 0.2em; color: rgba(245,237,216,0.4); text-transform: uppercase; }
+  .visit-info {
+    padding: 100px 80px;
+    background: var(--espresso);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .hours-list { list-style: none; margin: 40px 0; }
+  .hours-list li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(245,237,216,0.06);
+    font-size: 0.9rem;
+  }
+  .hours-list li:last-child { border-bottom: none; }
+  .day { color: rgba(245,237,216,0.5); letter-spacing: 0.05em; }
+  .time { color: var(--cream); }
+  .today-badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: var(--caramel);
+    color: var(--espresso);
+    padding: 2px 8px;
+    margin-left: 10px;
+  }
+  .phone-link {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    margin-top: 16px;
+    transition: opacity 0.3s;
+  }
+  .phone-link:hover { opacity: 0.7; }
+
+  /* ── NEWSLETTER ── */
+  #newsletter {
+    padding: 120px 60px;
+    background: var(--roast);
+    text-align: center;
+  }
+  .newsletter-inner { max-width: 580px; margin: 0 auto; }
+  .newsletter-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: rgba(245,237,216,0.55);
+    margin: 20px 0 48px;
+    line-height: 1.7;
+  }
+  .email-form {
+    display: flex; gap: 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .email-input {
+    flex: 1;
+    background: rgba(26,10,0,0.6);
+    border: 1px solid rgba(212,168,83,0.25);
+    border-right: none;
+    color: var(--cream);
+    padding: 16px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .email-input:focus { border-color: var(--gold); }
+  .email-input::placeholder { color: rgba(245,237,216,0.3); }
+  .email-submit {
+    background: var(--caramel);
+    border: 1px solid var(--caramel);
+    color: var(--espresso);
+    padding: 16px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.3s;
+    white-space: nowrap;
+  }
+  .email-submit:hover { background: var(--gold); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #0A0300;
+    padding: 80px 60px 40px;
+    border-top: 1px solid rgba(212,168,83,0.1);
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+  }
+  .footer-brand .nav-logo { display: block; margin-bottom: 20px; }
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: rgba(245,237,216,0.4);
+    line-height: 1.7;
+  }
+  .footer-col-title {
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--caramel);
+    margin-bottom: 24px;
+  }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 12px; }
+  .footer-links a {
+    color: rgba(245,237,216,0.4);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--cream); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 32px;
+    border-top: 1px solid rgba(245,237,216,0.06);
+  }
+  .footer-copy { font-size: 0.72rem; color: rgba(245,237,216,0.2); letter-spacing: 0.1em; }
+  .social-links { display: flex; gap: 20px; }
+  .social-links a {
+    color: rgba(245,237,216,0.3);
+    text-decoration: none;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .social-links a:hover { color: var(--gold); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── CART INDICATOR ── */
+  .cart-indicator {
+    position: fixed;
+    bottom: 36px; right: 36px;
+    background: var(--caramel);
+    color: var(--espresso);
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    z-index: 400;
+    cursor: none;
+    box-shadow: 0 8px 32px rgba(200,129,58,0.3);
+    transition: transform 0.3s, background 0.3s;
+  }
+  .cart-indicator:hover { transform: scale(1.1); background: var(--gold); }
+  .cart-count {
+    position: absolute;
+    top: -4px; right: -4px;
+    width: 20px; height: 20px;
+    background: var(--espresso);
+    color: var(--gold);
+    font-size: 0.65rem;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .cart-count.visible { opacity: 1; }
+
+  /* ── RESPONSIVE ADJUSTMENTS ── */
+  @media (max-width: 1024px) {
+    nav { padding: 24px 32px; }
+    .nav-links { display: none; }
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 120px 32px 80px; }
+    .menu-grid { grid-template-columns: repeat(2, 1fr); }
+    #story { grid-template-columns: 1fr; }
+    .story-visual { min-height: 400px; }
+    .specials-grid { grid-template-columns: 1fr 1fr; }
+    #visit { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    #menu, #specials, #reviews, #newsletter { padding: 80px 32px; }
+    .story-text, .visit-info, .visit-map { padding: 80px 32px; }
+    .reviews-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Brûlé</a>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#story">Our Story</a></li>
+    <li><a href="#specials">Specials</a></li>
+    <li><a href="#visit">Visit</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Order Now</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Est. 2019 · Specialty Roasters</p>
+    <h1 class="hero-title">Where Coffee<br>Becomes <em>Art</em></h1>
+    <p class="hero-sub">Single-origin beans, slow-roasted with precision. Every cup tells the story of its origin, the hands that grew it, and the craft that perfected it.</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary">Explore Menu</a>
+      <a href="#story" class="btn-ghost">Our Story</a>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      Scroll to explore
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-coffee-visual">
+      <svg class="cup-scene" viewBox="0 0 340 400">
+        <!-- Steam lines -->
+        <path class="steam-path" d="M 140 100 Q 130 80 140 60 Q 150 40 140 20" />
+        <path class="steam-path" d="M 170 110 Q 160 85 170 60 Q 180 35 170 10" />
+        <path class="steam-path" d="M 200 100 Q 190 80 200 55 Q 210 30 200 5" />
+        <!-- Cup body -->
+        <path d="M 100 140 L 240 140 L 220 270 Q 218 285 170 285 Q 122 285 120 270 Z" fill="#2E1200" stroke="#D4A853" stroke-width="1.5" opacity="0.9"/>
+        <!-- Coffee surface -->
+        <ellipse cx="170" cy="143" rx="70" ry="12" fill="#6B3A1F" stroke="#C8813A" stroke-width="1"/>
+        <!-- Latte art circle -->
+        <ellipse cx="170" cy="143" rx="40" ry="7" fill="none" stroke="rgba(245,237,216,0.3)" stroke-width="1.5"/>
+        <path d="M 150 143 Q 170 133 190 143" fill="none" stroke="rgba(245,237,216,0.25)" stroke-width="1.5"/>
+        <!-- Handle -->
+        <path d="M 240 170 Q 275 170 275 200 Q 275 230 240 230" fill="none" stroke="#D4A853" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Saucer -->
+        <ellipse cx="170" cy="295" rx="90" ry="14" fill="#1A0800" stroke="#C8813A" stroke-width="1"/>
+        <!-- Spoon -->
+        <line x1="125" y1="285" x2="85" y2="320" stroke="#D4A853" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+        <ellipse cx="82" cy="323" rx="7" ry="5" fill="#C8813A" opacity="0.6"/>
+        <!-- Decorative ring -->
+        <circle cx="170" cy="200" r="110" fill="none" stroke="rgba(212,168,83,0.05)" stroke-width="1"/>
+        <circle cx="170" cy="200" r="130" fill="none" stroke="rgba(212,168,83,0.03)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="hero-badge">
+      <div class="badge-num">12+</div>
+      <div class="badge-label">Origins worldwide</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item"><span>Single Origin</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Cold Brew</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Pour Over</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Specialty Roasts</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Oat Milk Lattes</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Seasonal Specials</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Fresh Pastries</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Ethically Sourced</span><span class="marquee-dot">✦</span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-item"><span>Single Origin</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Cold Brew</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Pour Over</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Specialty Roasts</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Oat Milk Lattes</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Seasonal Specials</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Fresh Pastries</span><span class="marquee-dot">✦</span></div>
+    <div class="marquee-item"><span>Ethically Sourced</span><span class="marquee-dot">✦</span></div>
+  </div>
+</div>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-header reveal">
+    <div>
+      <p class="section-label">Our Menu</p>
+      <h2 class="section-title">Crafted with <em>Intention</em></h2>
+    </div>
+    <div class="menu-tabs">
+      <button class="tab-btn active" onclick="filterMenu('all', this)">All</button>
+      <button class="tab-btn" onclick="filterMenu('espresso', this)">Espresso</button>
+      <button class="tab-btn" onclick="filterMenu('filter', this)">Filter</button>
+      <button class="tab-btn" onclick="filterMenu('cold', this)">Cold</button>
+      <button class="tab-btn" onclick="filterMenu('food', this)">Food</button>
+    </div>
+  </div>
+  <div class="menu-grid" id="menuGrid">
+
+    <div class="menu-item reveal" data-category="espresso">
+      <span class="item-tag">Popular</span>
+      <span class="item-icon">☕</span>
+      <h3 class="item-name">Cortado</h3>
+      <p class="item-desc">Equal parts espresso and warm milk foam. Clean, balanced, unapologetically bold.</p>
+      <div class="item-footer">
+        <span class="item-price">$4.50</span>
+        <button class="item-add" onclick="addToCart(this)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item reveal" data-category="espresso">
+      <span class="item-icon">🫖</span>
+      <h3 class="item-name">Oat Flat White</h3>
+      <p class="item-desc">Double ristretto over silky oat milk microfoam. Velvet in a cup.</p>
+      <div class="item-footer">
+        <span class="item-price">$5.75</span>
+        <button class="item-add" onclick="addToCart(this)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item reveal" data-category="filter">
+      <span class="item-tag">New</span>
+      <span class="item-icon">🫗</span>
+      <h3 class="item-name">Pour Over</h3>
+      <p class="item-desc">Ethiopian Yirgacheffe, bloomed and brewed to order. Floral, jasmine, wild berry.</p>
+      <div class="item-footer">
+        <span class="item-price">$6.50</span>
+        <button class="item-add" onclick="addToCart(this)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item reveal" data-category="cold">
+      <span class="item-icon">🧊</span>
+      <h3 class="item-name">Cold Brew</h3>
+      <p class="item-desc">Steeped 18 hours in cool water. Smooth, low-acid, dangerously drinkable.</p>
+      <div class="item-footer">
+        <span class="item-price">$5.50</span>
+        <button class="item-add" onclick="addToCart(this)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item reveal" data-category="espresso">
+      <span class="item-icon">✨</span>
+      <h3 class="item-name">Lavender Latte</h3>
+      <p class="item-desc">House lavender syrup, double shot, oat milk. Floral and grounding in equal measure.</p>
+      <div class="item-footer">
+        <span class="item-price">$6.25</span>
+        <button class="item-add" onclick="addToCart(this)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item reveal" data-category="food">
+      <span class="item-tag">Baked Fresh</span>
+      <span class="item-icon">🥐</span>
+      <h3 class="item-name">Almond Croissant</h3>
+      <p class="item-desc">Twice-baked with almond frangipane and toasted flakes. Baked in-house, daily.</p>
+      <div class="item-footer">
+        <span class="item-price">$4.75</span>
+        <button class="item-add" onclick="addToCart(this)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item reveal" data-category="cold">
+      <span class="item-icon">🥛</span>
+      <h3 class="item-name">Iced Matcha Latte</h3>
+      <p class="item-desc">Ceremonial-grade matcha whisked with oat milk over ice. Earthy, sweet, alive.</p>
+      <div class="item-footer">
+        <span class="item-price">$5.95</span>
+        <button class="item-add" onclick="addToCart(this)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item reveal" data-category="espresso">
+      <span class="item-icon">🌑</span>
+      <h3 class="item-name">Espresso Tonic</h3>
+      <p class="item-desc">Double shot over sparkling tonic water and ice. Strange, effervescent, wonderful.</p>
+      <div class="item-footer">
+        <span class="item-price">$5.50</span>
+        <button class="item-add" onclick="addToCart(this)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item reveal" data-category="food">
+      <span class="item-icon">🍰</span>
+      <h3 class="item-name">Olive Oil Cake</h3>
+      <p class="item-desc">Cardamom, lemon zest, rosemary. Moist, fragrant, impossible to stop at one slice.</p>
+      <div class="item-footer">
+        <span class="item-price">$5.25</span>
+        <button class="item-add" onclick="addToCart(this)">+</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- STORY -->
+<section id="story">
+  <div class="story-visual">
+    <div class="big-number">19</div>
+    <div class="story-stats">
+      <div class="stat-block reveal">
+        <div class="stat-number">12+</div>
+        <div class="stat-label">Origins sourced</div>
+      </div>
+      <div class="stat-block reveal">
+        <div class="stat-number">5K</div>
+        <div class="stat-label">Cups weekly</div>
+      </div>
+      <div class="stat-block reveal">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Roast profiles</div>
+      </div>
+      <div class="stat-block reveal">
+        <div class="stat-number">98%</div>
+        <div class="stat-label">Guest returning</div>
+      </div>
+    </div>
+  </div>
+  <div class="story-text">
+    <div class="reveal">
+      <p class="section-label">Our Philosophy</p>
+      <h2 class="section-title">Coffee as a <em>Practice</em></h2>
+      <div class="divider-gold"></div>
+      <p class="story-body">
+        We started Brûlé because we believed the best coffee experiences weren't happening in grand cafés — they were happening in <strong>quiet moments of precision</strong>, between a thoughtful roaster and a perfect cup.
+        <br><br>
+        Every bean we source has a name, a farmer, a latitude. We taste over <strong>200 samples a year</strong> to select the 12 origins we carry. Because the most extraordinary cup you'll ever drink starts long before you enter our door.
+      </p>
+      <a href="#menu" class="btn-primary">See What's Brewing</a>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIALS -->
+<section id="specials">
+  <div class="reveal" style="margin-bottom: 0">
+    <p class="section-label">Seasonal Highlights</p>
+    <h2 class="section-title">This <em>Season's</em> Story</h2>
+  </div>
+  <div class="specials-grid">
+    <div class="special-card reveal">
+      <div class="special-bg special-bg-1"></div>
+      <span class="special-emoji">🍂</span>
+      <div class="special-content">
+        <p class="special-season">Spring Feature</p>
+        <h3 class="special-name">Rose & Cardamom<br>Latte</h3>
+        <p class="special-desc">House rose syrup, green cardamom, double shot, steamed oat milk. Every sip is a garden.</p>
+        <div class="special-price-row">
+          <span class="special-price">$7.50</span>
+          <button class="special-order" onclick="addToCart(this)">Order Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="special-card reveal">
+      <div class="special-bg special-bg-2"></div>
+      <span class="special-emoji">🌿</span>
+      <div class="special-content">
+        <p class="special-season">Limited Roast</p>
+        <h3 class="special-name">Kenya<br>Giakanja</h3>
+        <p class="special-desc">Blackcurrant, tomato, brown sugar. A polarizing, unforgettable natural process.</p>
+        <div class="special-price-row">
+          <span class="special-price">$8.00</span>
+          <button class="special-order" onclick="addToCart(this)">Order Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="special-card reveal">
+      <div class="special-bg special-bg-3"></div>
+      <span class="special-emoji">🫐</span>
+      <div class="special-content">
+        <p class="special-season">Chef's Special</p>
+        <h3 class="special-name">Brown Butter<br>Financier</h3>
+        <p class="special-desc">Almond flour, noisette, blueberry compote. Pairs perfectly with your pour over.</p>
+        <div class="special-price-row">
+          <span class="special-price">$5.50</span>
+          <button class="special-order" onclick="addToCart(this)">Order Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="reviews-intro reveal">
+    <p class="section-label">Guest Stories</p>
+    <h2 class="section-title">What They <em>Say</em></h2>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <div class="review-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">The pour over changed how I think about coffee. I always thought I was a milk person. I was wrong. This is what coffee is supposed to taste like.</p>
+      <p class="reviewer-name">— Priya M., Regular</p>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">I travel for work constantly. Brûlé is the only place I've found that makes me genuinely excited to wake up at 6am. The cortado is perfection in miniature.</p>
+      <p class="reviewer-name">— James T., Visitor</p>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">The olive oil cake is worth the trip alone. I don't even drink coffee — I come for the atmosphere and the pastries. And then I accidentally started ordering lattes.</p>
+      <p class="reviewer-name">— Soo-Yeon K., Converted</p>
+    </div>
+  </div>
+</section>
+
+<!-- VISIT -->
+<section id="visit">
+  <div class="visit-map">
+    <div class="big-number" style="font-size:30vw; opacity:0.04; position:absolute;">📍</div>
+    <div class="map-placeholder reveal">
+      <div class="map-icon">📍</div>
+      <p class="map-address">14 Blackwood Lane</p>
+      <p class="map-city">Portland, OR 97201</p>
+      <div class="divider-gold" style="margin: 24px auto;"></div>
+      <a href="https://maps.google.com" target="_blank" class="btn-primary" style="display:inline-block; font-size:0.72rem;">Get Directions</a>
+    </div>
+  </div>
+  <div class="visit-info reveal">
+    <p class="section-label">Find Us</p>
+    <h2 class="section-title">Come In &<br><em>Stay Awhile</em></h2>
+    <ul class="hours-list">
+      <li>
+        <span class="day">Monday – Friday</span>
+        <span class="time">7:00 am – 6:00 pm <span class="today-badge">Today</span></span>
+      </li>
+      <li>
+        <span class="day">Saturday</span>
+        <span class="time">8:00 am – 7:00 pm</span>
+      </li>
+      <li>
+        <span class="day">Sunday</span>
+        <span class="time">9:00 am – 5:00 pm</span>
+      </li>
+    </ul>
+    <a href="tel:+15031234567" class="phone-link">
+      <span>☎</span>
+      <span>(503) 123-4567</span>
+    </a>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section id="newsletter">
+  <div class="newsletter-inner reveal">
+    <p class="section-label">Stay Connected</p>
+    <h2 class="section-title">Never Miss a<br><em>New Roast</em></h2>
+    <p class="newsletter-sub">Seasonal menus, limited roast drops, and the occasional story from the farms we work with. No noise. Just good coffee news.</p>
+    <div class="email-form">
+      <input type="email" class="email-input" placeholder="your@email.com" />
+      <button class="email-submit" onclick="handleSubscribe()">Subscribe</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">Brûlé</a>
+      <p class="footer-tagline">Specialty coffee roasters and slow-bar café in Portland, Oregon. Open since 2019.</p>
+    </div>
+    <div>
+      <p class="footer-col-title">Menu</p>
+      <ul class="footer-links">
+        <li><a href="#menu">Espresso Bar</a></li>
+        <li><a href="#menu">Filter Coffee</a></li>
+        <li><a href="#menu">Cold Drinks</a></li>
+        <li><a href="#menu">Food & Pastry</a></li>
+        <li><a href="#specials">Seasonal</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Company</p>
+      <ul class="footer-links">
+        <li><a href="#story">Our Story</a></li>
+        <li><a href="#">Sourcing</a></li>
+        <li><a href="#">Roastery</a></li>
+        <li><a href="#">Wholesale</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Contact</p>
+      <ul class="footer-links">
+        <li><a href="#">hello@brule.coffee</a></li>
+        <li><a href="#">(503) 123-4567</a></li>
+        <li><a href="#">14 Blackwood Lane</a></li>
+        <li><a href="#">Portland, OR</a></li>
+        <li><a href="#">Private Events</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Brûlé Coffee. All rights reserved.</span>
+    <div class="social-links">
+      <a href="#">Instagram</a>
+      <a href="#">Twitter</a>
+      <a href="#">TikTok</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Cart Indicator -->
+<div class="cart-indicator" id="cartBtn" title="Cart">
+  ☕
+  <span class="cart-count" id="cartCount">0</span>
+</div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      cursorRing.style.left = e.clientX + 'px';
+      cursorRing.style.top = e.clientY + 'px';
+    }, 80);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Menu filter
+  function filterMenu(cat, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.menu-item').forEach(item => {
+      if (cat === 'all' || item.dataset.category === cat) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
+  // Cart
+  let cartItems = 0;
+  function addToCart(btn) {
+    cartItems++;
+    const count = document.getElementById('cartCount');
+    count.textContent = cartItems;
+    count.classList.add('visible');
+    // Feedback animation
+    btn.textContent = '✓';
+    btn.style.background = 'var(--caramel)';
+    btn.style.color = 'var(--espresso)';
+    setTimeout(() => {
+      btn.textContent = '+';
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1000);
+    // Pulse cart
+    const cartBtn = document.getElementById('cartBtn');
+    cartBtn.style.transform = 'scale(1.25)';
+    setTimeout(() => cartBtn.style.transform = '', 300);
+  }
+
+  // Newsletter
+  function handleSubscribe() {
+    const input = document.querySelector('.email-input');
+    const btn = document.querySelector('.email-submit');
+    if (input.value && input.value.includes('@')) {
+      btn.textContent = '✓ Subscribed!';
+      btn.style.background = '#4CAF50';
+      input.value = '';
+      setTimeout(() => {
+        btn.textContent = 'Subscribe';
+        btn.style.background = '';
+      }, 3000);
+    } else {
+      input.style.borderColor = 'var(--caramel)';
+      setTimeout(() => input.style.borderColor = '', 2000);
+    }
+  }
+  document.querySelector('.email-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') handleSubscribe();
+  });
+
+  // Smooth stagger for menu grid on load
+  document.querySelectorAll('.menu-item').forEach((item, i) => {
+    item.style.transitionDelay = (i * 0.05) + 's';
+  });
+</script>
+</body>
+</html>
